@@ -9,11 +9,11 @@ namespace YoutubeExtractor
     {
         public static string DecipherWithVersion(string cipher, string cipherVersion)
         {
-            string jsUrl = string.Format("http://s.ytimg.com/yts/jsbin/player-{0}.js", cipherVersion);
+            string jsUrl = string.Format("http://s.ytimg.com/yts/jsbin/player_{0}.js", cipherVersion);
             string js = HttpHelper.DownloadString(jsUrl);
 
             //Find "C" in this: var A = B.sig||C (B.s)
-            string functNamePattern = @"\.sig\s*\|\|([a-zA-Z0-9\$]+)\("; //Regex Formed To Find Word or DollarSign
+            string functNamePattern = @"\""signature"",\s?([a-zA-Z0-9\$]+)\("; //Regex Formed To Find Word or DollarSign
 
             var funcName = Regex.Match(js, functNamePattern).Groups[1].Value;
             
