@@ -88,8 +88,7 @@ namespace ExampleApplication
         private static void Main()
         {
             // Our test youtube link
-            //const string link = "https://www.youtube.com/watch?v=YQHsXMglC9A";
-            const string link = "http://youtube.com/watch?v=3ZgvfUQMpts";
+            const string link = "https://www.youtube.com/watch?v=YQHsXMglC9A";
 
             /*
              * Get the available video formats.
