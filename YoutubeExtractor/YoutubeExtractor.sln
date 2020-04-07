@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.757
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YoutubeExtractor", "YoutubeExtractor\YoutubeExtractor.csproj", "{ECDC127F-8DEF-4F99-8300-72C13597339D}"
 EndProject
@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleApplication.Portable
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YoutubeExtractor.Tests", "YoutubeExtractor.Tests\YoutubeExtractor.Tests.csproj", "{CE76B74C-BD0C-4768-8F8B-78E0FBD46FBC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YoutubeExtractor.App", "YoutubeExtractor.App\YoutubeExtractor.App.csproj", "{7DE31B5A-2347-45B1-A05B-C6ED6B3179DF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,9 +45,16 @@ Global
 		{CE76B74C-BD0C-4768-8F8B-78E0FBD46FBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CE76B74C-BD0C-4768-8F8B-78E0FBD46FBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CE76B74C-BD0C-4768-8F8B-78E0FBD46FBC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7DE31B5A-2347-45B1-A05B-C6ED6B3179DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7DE31B5A-2347-45B1-A05B-C6ED6B3179DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7DE31B5A-2347-45B1-A05B-C6ED6B3179DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7DE31B5A-2347-45B1-A05B-C6ED6B3179DF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DA0C2CDF-C5EF-47F6-8F12-D38AF75E5F1E}
 	EndGlobalSection
 	GlobalSection(CodealikeProperties) = postSolution
 		SolutionGuid = 09b3acc1-9c76-4060-a18f-5b5f253925cc
