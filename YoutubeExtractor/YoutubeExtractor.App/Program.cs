@@ -42,12 +42,13 @@ namespace YoutubeExtractor.App
                 case "info" when HasAt(args, 1):
                     RunInfo(args[1]);
                     break;
-                case "download" when HasAt(args, 1) && HasAt(args, 2):
-                    RunDownload(args[1], args[2], At(args, 3), At(args, 4), At(args, 5));
+                case "download" when HasAt(args, 1) && HasAt(args, 2) && HasAt(args, 3) && HasAt(args, 4) && HasAt(args, 5):
+                    RunDownload(args[1], args[2], args[3], args[4], args[5]);
                     break;
                 default:
-                    Console.WriteLine("app.exe download https://www.youtube.com/watch?v=XXXXXXXX output.mp4  [0|480|720|1080] [Mp4|WebM] [Aac|Unknown]");
-                    Console.WriteLine("app.exe info https://www.youtube.com/watch?v=XXXXXXXX");
+                    Console.WriteLine("youtube.exe download https://www.youtube.com/watch?v=XXXXXXXX output.mp4  [0|480|720|1080] [Mp4|WebM] [Aac|Unknown]");
+                    Console.WriteLine("youtube.exe info https://www.youtube.com/watch?v=XXXXXXXX");
+                    Console.WriteLine("youtube.exe search \"The best video\"");
                     break;
             }
         }
