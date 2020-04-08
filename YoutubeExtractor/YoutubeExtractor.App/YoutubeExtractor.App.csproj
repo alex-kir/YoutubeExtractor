@@ -43,9 +43,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AssemblySmartResolver.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\AppOptions\AppOptions.cs" />
+    <Compile Include="Services\AppOptions\AppOptionsAttribute.cs" />
+    <Compile Include="Services\AssemblySmartResolver\AssemblySmartResolver.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

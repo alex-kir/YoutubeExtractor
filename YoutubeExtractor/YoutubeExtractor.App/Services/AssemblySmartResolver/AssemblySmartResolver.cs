@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Reflection;
 
-namespace YoutubeExtractor.App
+namespace Services
 {
     class AssemblySmartResolver
     {
@@ -22,7 +22,8 @@ namespace YoutubeExtractor.App
 
             foreach (var name in _assembly.GetManifestResourceNames())
             {
-                if (name.Substring(_assemblyPrefixName.Length).Contains(resolveName))
+                if (name.Substring(_assemblyPrefixName.Length).Contains(resolveName) &&
+                    name.EndsWith(".dll", StringComparison.InvariantCultureIgnoreCase))
                 {
                     var stream = _assembly.GetManifestResourceStream(name);
                     var bytes = new byte[stream.Length];

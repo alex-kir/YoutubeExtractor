@@ -1,10 +1,46 @@
-﻿using System;
+﻿using Services;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 
 namespace YoutubeExtractor.App
 {
+    [AppOptions(Description = "youtube toolset")]
+    class Options
+    {
+        [AppOptions(FullKeys = new[] { "help" }, ShortKeys = new[] { "h" })]
+        public bool Help { get; set; }
+
+        //----------------------
+
+        [AppOptions(FullKeys = new[] { "search" }, Description = "Search string")]
+        public string Search { get; set; }
+
+        //----------------------
+
+        [AppOptions(FullKeys = new[] { "info" }, Description = "Dispay info")]
+        public string Info { get; set; }
+
+        //----------------------
+
+        [AppOptions(FullKeys = new[] { "download"}, Description = "Download video")]
+        public string Download { get; set; }
+
+        [AppOptions(FullKeys = new[] { "output" }, ShortKeys = new[] { "o" }, Description = "Optional. Output download file")]
+        public string Output { get; set; }
+
+        [AppOptions(FullKeys = new[] { "resolution" }, ShortKeys = new[] { "r" }, Description = "Optional. Preferred download resolution")]
+        public int Resolution { get; set; } = 720;
+
+        [AppOptions(FullKeys = new[] { "video-type" }, ShortKeys = new[] { "vt" }, Description = "Optional. Preferred download video type (Mp4|WebM)")]
+        public string VideoType { get; set; }
+
+        [AppOptions(FullKeys = new[] { "audio-type" }, ShortKeys = new[] { "at" }, Description = "Optional. Preferred download audio type (Aac|Unknown)")]
+        public string AudioType { get; set; }
+    }
+
     class Program
     {
         static void Main(string[] args)
@@ -34,22 +70,26 @@ namespace YoutubeExtractor.App
 
         private static void Run(string[] args)
         {
-            switch (At(args, 0))
+            var o = new Options();
+            if (!AppOptions.TryParse(args, o) || o.Help)
             {
-                case "search" when HasAt(args, 1):
-                    RunSearch(args[1]);
-                    break;
-                case "info" when HasAt(args, 1):
-                    RunInfo(args[1]);
-                    break;
-                case "download" when HasAt(args, 1) && HasAt(args, 2) && HasAt(args, 3) && HasAt(args, 4) && HasAt(args, 5):
-                    RunDownload(args[1], args[2], args[3], args[4], args[5]);
-                    break;
-                default:
-                    Console.WriteLine("youtube.exe download https://www.youtube.com/watch?v=XXXXXXXX output.mp4  [0|480|720|1080] [Mp4|WebM] [Aac|Unknown]");
-                    Console.WriteLine("youtube.exe info https://www.youtube.com/watch?v=XXXXXXXX");
-                    Console.WriteLine("youtube.exe search \"The best video\"");
-                    break;
+                AppOptions.PrintHelp<Options>();
+            }
+            else if (o.Info != null)
+            {
+                RunInfo(o.Info);
+            }
+            else if (o.Search != null)
+            {
+                RunSearch(o.Search);
+            }
+            else if (o.Download != null)
+            {
+                RunDownload(o.Download, o.Output, o.Resolution, o.VideoType, o.AudioType);
+            }
+            else
+            {
+                AppOptions.PrintHelp<Options>();
             }
         }
 
@@ -68,22 +108,26 @@ namespace YoutubeExtractor.App
             }
         }
 
-        private static void RunDownload(string url, string path, string resolution, string videoType, string audioType)
+        private static void RunDownload(string url, string path, int resolution, string videoType, string audioType)
         {
             videoType = videoType ?? VideoType.Mp4.ToString();
             audioType = audioType ?? AudioType.Aac.ToString();
-            resolution = resolution ?? 720.ToString();
 
-            IEnumerable<VideoInfo> videoInfos = DownloadUrlResolver.GetDownloadUrls(url, false);
+            var videoInfos = DownloadUrlResolver.GetDownloadUrls(url, false).ToList();
 
-            VideoInfo video = videoInfos
-                .First(info =>
-                    info.VideoType.ToString() == videoType &&
-                    info.AudioType.ToString() == audioType &&
-                    info.Resolution.ToString() == resolution);
+            var cc = videoInfos.OrderBy(it => Math.Abs(it.Resolution - resolution)).ToList();
+            if (videoType != null && cc.Any(it => it.VideoType.ToString() == videoType))
+                cc = cc.Where(it => it.VideoType.ToString() == videoType).ToList();
+            if (audioType != null && cc.Any(it => it.AudioType.ToString() == audioType))
+                cc = cc.Where(it => it.AudioType.ToString() == audioType).ToList();
+
+            VideoInfo video = cc.First();
 
             if (video.RequiresDecryption)
                 DownloadUrlResolver.DecryptDownloadUrl(video);
+
+            if (string.IsNullOrEmpty(path))
+                path = string.Join("_", video.Title.Split(Path.GetInvalidPathChars())) + ".mp4";
 
             var videoDownloader = new VideoDownloader(video, path);
             videoDownloader.Execute();
