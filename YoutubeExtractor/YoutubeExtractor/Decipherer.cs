@@ -23,7 +23,7 @@ namespace YoutubeExtractor
                 {
                     var jsUrl = string.Format(format, cipherVersion);
                     string js = HttpHelper.DownloadString(jsUrl);
-
+                    return js;
                 }
                 catch (Exception ex)
                 {
