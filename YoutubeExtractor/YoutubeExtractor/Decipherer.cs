@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -7,10 +8,35 @@ namespace YoutubeExtractor
 {
     internal static class Decipherer
     {
+        private static string GetJs(string cipherVersion)
+        {
+            string[] formats = {
+                "https://www.youtube.com/s/player{0}.js",
+                "http://s.ytimg.com/yts/jsbin/player{0}.js",
+            };
+
+            var exceptions = new List<Exception>();
+
+            foreach (var format in formats)
+            {
+                try
+                {
+                    var jsUrl = string.Format(format, cipherVersion);
+                    string js = HttpHelper.DownloadString(jsUrl);
+
+                }
+                catch (Exception ex)
+                {
+                    exceptions.Add(ex);
+                }
+            }
+
+            throw new Exception(string.Join("\n--------\n", exceptions.Select(ex => ex.ToString()).ToArray()));
+        }
+
         public static string DecipherWithVersion(string cipher, string cipherVersion)
         {
-            string jsUrl = string.Format("http://s.ytimg.com/yts/jsbin/player{0}.js", cipherVersion);
-            string js = HttpHelper.DownloadString(jsUrl);
+            string js = GetJs(cipherVersion);
 
             //Find "yv" in this: c&&a.set(b,encodeURIComponent(yv(
             string functNamePattern = @"(\w+)=function\(\w+\){(\w+)=\2\.split\(\x22{2}\);.*?return\s+\2\.join\(\x22{2}\)}"; //Regex Formed To Find Word or DollarSign
