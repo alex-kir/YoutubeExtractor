@@ -127,7 +127,12 @@ namespace YoutubeExtractor.App
                 DownloadUrlResolver.DecryptDownloadUrl(video);
 
             if (string.IsNullOrEmpty(path))
-                path = string.Join("_", video.Title.Split(Path.GetInvalidPathChars())) + ".mp4";
+            {
+                var chars = Path.GetInvalidPathChars().Concat(Path.GetInvalidFileNameChars()).ToArray();
+                path = string.Join("_", video.Title.Split(chars)) + ".mp4";
+            }
+
+            Console.WriteLine(path);
 
             var videoDownloader = new VideoDownloader(video, path);
             videoDownloader.Execute();

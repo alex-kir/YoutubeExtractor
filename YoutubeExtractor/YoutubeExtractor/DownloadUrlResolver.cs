@@ -228,6 +228,10 @@ namespace YoutubeExtractor
                 {
                     streamMapString.Add(format["cipher"].ToString());
                 }
+                else if (format.ContainsKey("signatureCipher"))
+                {
+                    streamMapString.Add(format["signatureCipher"].ToString());
+                }
             }
 
             return streamMapString.ToArray();
@@ -262,6 +266,10 @@ namespace YoutubeExtractor
                 else if (format.ContainsKey("cipher"))
                 {
                     streamMapString.Add(format["cipher"].ToString());
+                }
+                else if (format.ContainsKey("signatureCipher"))
+                {
+                    streamMapString.Add(format["signatureCipher"].ToString());
                 }
             }
 
