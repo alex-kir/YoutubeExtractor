@@ -129,7 +129,7 @@ namespace YoutubeExtractor.App
             if (string.IsNullOrEmpty(path))
             {
                 var chars = Path.GetInvalidPathChars().Concat(Path.GetInvalidFileNameChars()).ToArray();
-                path = string.Join("_", video.Title.Split(chars)) + ".mp4";
+                path = "[" + video.VideoId + "]" + string.Join("_", video.Title.Split(chars)) + ".mp4";
             }
 
             Console.WriteLine(path);

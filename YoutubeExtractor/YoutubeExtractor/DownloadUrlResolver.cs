@@ -91,6 +91,7 @@ namespace YoutubeExtractor
                 var player_response = page.PlayerConfigJson;// JObject.Parse(json.ToString());
 
                 string videoTitle = GetVideoTitle(player_response);
+                var videoId = GetVideoId(player_response);
 
                 IEnumerable<ExtractionInfo> downloadUrls = ExtractDownloadUrls(player_response);
 
@@ -101,6 +102,7 @@ namespace YoutubeExtractor
                 foreach (VideoInfo info in infos)
                 {
                     info.HtmlPlayerVersion = htmlPlayerVersion;
+                    info.VideoId = videoId;
 
                     //It takes a long time to decrypt all of item.
                     /*if (decryptSignature && info.RequiresDecryption)
@@ -321,6 +323,12 @@ namespace YoutubeExtractor
             JToken title = json["videoDetails"]["title"];
 
             return title == null ? String.Empty : title.ToString();
+        }
+
+        private static string GetVideoId(JObject json)
+        {
+            JToken videoId = json["videoDetails"]["videoId"];
+            return videoId == null ? String.Empty : videoId.ToString();
         }
 
         private static bool IsVideoUnavailable(string pageSource)
