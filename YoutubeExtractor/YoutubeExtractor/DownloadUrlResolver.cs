@@ -85,9 +85,10 @@ namespace YoutubeExtractor
 
             try
             {
-                var json = LoadJson(videoUrl);
+                var page = LoadJson(videoUrl);
 
-                var player_response = JObject.Parse(json["args"]["player_response"].ToString());
+                //var player_response = JObject.Parse(json["args"]["player_response"].ToString());
+                var player_response = page.PlayerConfigJson;// JObject.Parse(json.ToString());
 
                 string videoTitle = GetVideoTitle(player_response);
 
@@ -95,7 +96,7 @@ namespace YoutubeExtractor
 
                 IEnumerable<VideoInfo> infos = GetVideoInfos(downloadUrls, videoTitle).ToList();
 
-                string htmlPlayerVersion = GetHtml5PlayerVersion(json);
+                string htmlPlayerVersion = GetHtml5PlayerVersion(page);
 
                 foreach (VideoInfo info in infos)
                 {
@@ -242,13 +243,16 @@ namespace YoutubeExtractor
             return Decipherer.DecipherWithVersion(signature, htmlPlayerVersion);
         }
 
-        private static string GetHtml5PlayerVersion(JObject json)
+        private static string GetHtml5PlayerVersion(YoutubePage page)
         {
-            var regex = new Regex(@"player(.+?).js");
+            var regex = new Regex(@"player(.+?)\.js");
 
-            string js = json["assets"]["js"].ToString();
+            //string js = json["assets"]["js"].ToString();
+            string js = page.ConfigJson2.ToString();
+            //"jsUrl":"/s/player/5dd3f3b2/player_ias.vflset/ru_RU/base.js"
+            var m = regex.Match(js);
 
-            return regex.Match(js).Result("$1");
+            return m.Result("$1");
         }
 
         private static string[] GetStreamMap(JObject json)
@@ -326,20 +330,28 @@ namespace YoutubeExtractor
             return pageSource.Contains(unavailableContainer);
         }
 
-        private static JObject LoadJson(string url)
+        private static YoutubePage LoadJson(string url)
         {
-            string pageSource = HttpHelper.DownloadString(url);
+            var page = new YoutubePage();
+            page.Source = HttpHelper.DownloadString(url);
 
-            if (IsVideoUnavailable(pageSource))
+            if (IsVideoUnavailable(page.Source))
             {
                 throw new VideoNotAvailableException();
             }
 
-            var dataRegex = new Regex(@"ytplayer\.config\s*=\s*(\{.+?\});", RegexOptions.Multiline);
+            //var dataRegex = new Regex(@"ytplayer\.config\s*=\s*(\{.+?\});", RegexOptions.Multiline);
+            var dataRegex = new Regex(@"ytInitialPlayerResponse\s*=\s*(\{.+?\});", RegexOptions.Multiline);
 
-            string extractedJson = dataRegex.Match(pageSource).Result("$1");
+            var extractedJson = dataRegex.Match(page.Source).Result("$1");
+            page.PlayerConfigJson = JObject.Parse(extractedJson);
+            
+            var regex2 = new Regex(@"ytcfg.set\((\{.+?\})\);", RegexOptions.Multiline);
+            var json2 = regex2.Match(page.Source).Result("$1");
 
-            return JObject.Parse(extractedJson);
+            page.ConfigJson2 = JObject.Parse(json2);
+
+            return page;
         }
 
         private static void ThrowYoutubeParseException(Exception innerException, string videoUrl)
